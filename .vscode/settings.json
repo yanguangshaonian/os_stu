@@ -1,0 +1,27 @@
+{
+    "files.associations": {
+        "onix.h": "c",
+        "types.h": "c",
+        "cstring": "c",
+        "string.h": "c",
+        "sstream": "c",
+        "typeinfo": "c",
+        "io.h": "c",
+        "console.h": "c",
+        "system_error": "c",
+        "random": "c",
+        "algorithm": "c",
+        "stdarg.h": "c",
+        "*.tcc": "c",
+        "cstdio": "c",
+        "vprintf.h": "c",
+        "printk.h": "c",
+        "assert.h": "c",
+        "debug.h": "c",
+        "global.h": "c",
+        "task.h": "c",
+        "interrupt.h": "c",
+        "vector": "c",
+        "stdlib.h": "c"
+    }
+}
