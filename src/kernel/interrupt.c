@@ -13,9 +13,6 @@ u8* handler_table[IDT_SIZE];
 // 为了让我们从c语言加载 idt表, 中断时 会先进入这个指针所在函数内, 然后继续跳入到 handler_table中
 extern handler_entry_table[ENTRY_SIZE];
 
-// 导入调度函数
-extern void schdule();
-
 // 异常 中断处理函数默认函数
 void exception_handle(u8 handle_num,
     u32 edi, u32 esi, u32 ebp, u32 esp,
@@ -57,11 +54,36 @@ void send_eoi(u8 handle_num)
     }
 }
 
+
 // 外中断 中断处理函数默认函数
 void default_handler(u8 handle_num){
     send_eoi(handle_num);
-    // 外中断发生就立即调度
-    schdule();
+    DEBUGK("[0x%x] default interrupt called...\n", handle_num);
+}
+
+
+// 修改handler_table设置的默认处理函数为我们自己定义的
+// 主要针对外中断
+void set_interrupt_handler(u8 irq, usize handler) {
+    assert(irq >= 0 && irq < 16);  // 中断处理函数需要大于0, 且小于16, 因为外中断就是只有16个, 0x20到0x2f
+    handler_table[IRQ_MASTER_NR + irq] = handler;
+}
+
+// 设置某个外中断的状态是否打开和关闭
+void set_interrupt_mask(u8 irq, bool enable){
+    assert(irq >= 0 && irq < 16);
+    u16 port;
+    if (irq < 8) {  // 说明是一个主片
+        port = PIC_M_DATA;
+    } else {  // 从片
+        port = PIC_S_DATA;
+        irq -= 8;
+    }
+    if (enable){
+        out_8(port, in_8(port) & ~(1 << irq));
+    } else {
+        out_8(port, in_8(port) & (1 << irq));
+    }
 }
 
 
@@ -109,7 +131,7 @@ void pic_init(){
     out_8(PIC_S_DATA, 2);          // ICW3: 设置从片连接到主片的 IR2 引脚
     out_8(PIC_S_DATA, 0b00000001); // ICW4: 8086模式, 正常EOI
 
-    out_8(PIC_M_DATA, 0b11111110); // 只打开主片的第0个中断也就是 的主片的0x20时钟中断
+    out_8(PIC_M_DATA, 0b11111111); // 关闭所有主片pic中断
     out_8(PIC_S_DATA, 0b11111111); // 关闭从片所有pic中断
 }
 

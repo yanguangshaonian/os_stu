@@ -22,6 +22,9 @@
         "task.h": "c",
         "interrupt.h": "c",
         "vector": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "cassert": "c",
+        "*.inc": "c",
+        "clock.h": "c"
     }
 }

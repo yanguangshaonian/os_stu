@@ -15,8 +15,8 @@ u32 printk(const u8 *fmt, ...){
     i = vsprintf(buf, fmt, args);
     va_end(args);
     
-    asm volatile("cli\n");
+    // asm volatile("cli\n");
     console_write(buf, i);
-    asm volatile("sti\n");
+    // asm volatile("sti\n");
     return i;
 }

@@ -1,4 +1,3 @@
-
 #include <onix/onix.h>
 
 
@@ -14,14 +13,13 @@ void kernel_init(){
     // 初始化中断
     interrupt_init();
 
-    // int cnt = 0;
-    // while (true){
-    //     cnt += 1;
-    //     printk("%d", 123);
-    // }
-
     // 初始化任务
-    task_init();
+    // task_init();
+
+    clock_init();
+
+    asm volatile("sti\n");
+    hang();
 
 }
 
