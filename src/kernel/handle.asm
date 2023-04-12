@@ -29,6 +29,11 @@ section .text
 ; 用户的任务因为是在中断内进行的调度, 而进入中断 if标志位又被置为0, 所以由中断函数进入到当前任务中时, 需要把任务的eflag置为1(打开中断)
 ; 这样中断在调用完中断处理函数之后, 会pop保存的寄存器状态, 我们这个函数一进来就把 if标志位置 设置为1了, 也就跟着恢复了
 
+
+; 一些思维迸发的聊天就
+; 进入 task_switch 切换到任务 a, 任务a 直接pop完4个寄存器之后 ret 到func_ptr的位置执行, 然后他就执行呗,  直到一个时钟中断到来,  又pop了12个寄存器,和一堆寄存器进去, 调用时钟中断处理函数, -> schdule -> task_switch 把任务态的寄存器 push进去就是 ebp, ebx, esi, edi, 然后找到 任务b, 任务b把自己的 任务态的ebp, ebx, esi, edi pop到指定寄存器之后, 然后 ret 返回到调用 task_switch_的地方, 也就是 schdule, 由于 schdule代码内 task_switch执行完就没了
+; 太妙了,   进入中断之前 eflag被弹入栈, 然后eflag的if 置位1, 进入中断处理函数, 中断处理函数内事关闭中断的,  如果中断处理函数调用 任务, 任务内是无法被中断的, 所以在任务最开始的地方手动打开中断,  在 接连的ret   ret iret之后, eip是func_ptr跳入 任务, 任务第一行就是打开中断,   就算后面被中断了, 被中断时, 我们第一行代码将就是已经把打开了中断,  也会因为进入interrupt_entry 之前, cpu帮我们自动把 eflag csip这些压入栈 后面切到其他任务, abcdefg, 只要是切到这个任务, 那就回 接连pop, 然后iret 把 eflag cs ip这些恢复
+
 ; 时钟中断时 0x20 这个也没有错误码
 %macro INTERRUPT_HANDLER 2
 interrupt_handler_%1:
