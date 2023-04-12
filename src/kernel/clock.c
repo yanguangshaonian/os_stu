@@ -4,14 +4,10 @@
 #include <onix/io.h>
 
 
-
-usize counter = 0;
 // 时钟中断的处理函数, 等下就替换掉默认的外中断处理函数
 void clock_handler(u8 handle_num){
     assert(handle_num == 0x20);  // 只允许时钟中断调用这个
     send_eoi(handle_num);  // 通知中断控制器, cpu正在处理这个中断了
-    counter += 1;
-    DEBUGK("clock handler %d", counter);
 }
 
 void pit_init(){
@@ -25,7 +21,7 @@ void clock_init(){
     pit_init();
     // 设置中断处理函数
     set_interrupt_handler(IRQ_CLOCK, clock_handler);
-    // 打开中断
+    // 打开时钟中断
     set_interrupt_mask(IRQ_CLOCK, true);
 }
 

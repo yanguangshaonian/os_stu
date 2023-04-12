@@ -25,6 +25,7 @@
         "stdlib.h": "c",
         "cassert": "c",
         "*.inc": "c",
-        "clock.h": "c"
+        "clock.h": "c",
+        "time.h": "c"
     }
 }

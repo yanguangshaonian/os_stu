@@ -12,6 +12,7 @@
 #include <onix/interrupt.h>>
 #include <onix/stdlib.h>>
 #include <onix/clock.h>>
+#include <onix/time.h>>
 
 
 void kernel_init();
