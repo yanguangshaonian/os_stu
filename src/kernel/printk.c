@@ -6,6 +6,7 @@
 static u8* buf[1024];
 
 u32 printk(const u8 *fmt, ...){
+    
     va_list args;
     u32 i;
 
@@ -13,6 +14,9 @@ u32 printk(const u8 *fmt, ...){
     
     i = vsprintf(buf, fmt, args);
     va_end(args);
+    
+    asm volatile("cli\n");
     console_write(buf, i);
+    asm volatile("sti\n");
     return i;
 }

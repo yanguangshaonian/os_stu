@@ -25,10 +25,11 @@ task_switch:
     ; next的 的栈顶指针
     mov esp, [eax]
 
+    ; 在任务第一次进入到这里的时候会把我们设置的寄存器的默认值 pop 到指定寄存器中
     pop edi
     pop esi
     pop ebx
     pop ebp
 
-    ; 此时 栈顶是 call task_switch 的下一行代码的位置, ret即可
+    ; 此时 栈顶是 call task_switch 的下一行代码的位置, ret即可 
     ret

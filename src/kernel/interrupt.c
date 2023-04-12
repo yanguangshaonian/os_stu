@@ -13,15 +13,33 @@ u8* handler_table[IDT_SIZE];
 // 为了让我们从c语言加载 idt表, 中断时 会先进入这个指针所在函数内, 然后继续跳入到 handler_table中
 extern handler_entry_table[ENTRY_SIZE];
 
+// 导入调度函数
+extern void schdule();
+
 // 异常 中断处理函数默认函数
-void exception_handle(u8 handle_num){
+void exception_handle(u8 handle_num,
+    u32 edi, u32 esi, u32 ebp, u32 esp,
+    u32 ebx, u32 edx, u32 ecx, u32 eax,
+    u32 gs, u32 fs, u32 es, u32 ds,
+    u32 vector0, u32 error, u32 eip, u32 cs, u32 eflags){
     char *msg;
     if (handle_num < 22) {
         msg = messages[handle_num];
     } else{
         msg = messages[15];
     }
+
     printk("Exception as [0x%02X] %s\n", handle_num, msg);
+
+    // 打印异常发生时, 一些寄存器的状态
+    printk("\nEXCEPTION : %s \n", msg);
+    printk("   VECTOR : 0x%02X\n", handle_num);
+    printk("    ERROR : 0x%08X\n", error);
+    printk("   EFLAGS : 0x%08X\n", eflags);
+    printk("       CS : 0x%02X\n", cs);
+    printk("      EIP : 0x%08X\n", eip);
+    printk("      ESP : 0x%08X\n", esp);
+
     hang();
 }
 
@@ -39,13 +57,11 @@ void send_eoi(u8 handle_num)
     }
 }
 
-u32 counter = 0;
 // 外中断 中断处理函数默认函数
-void default_handler(u8 handle_num)
-{
+void default_handler(u8 handle_num){
     send_eoi(handle_num);
-    counter += 1;
-    DEBUGK("[%x] default interrupt called... %d", handle_num, counter);
+    // 外中断发生就立即调度
+    schdule();
 }
 
 

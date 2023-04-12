@@ -1,4 +1,5 @@
 #include <onix/task.h>
+#include <onix/debug.h>
 #include <onix/printk.h>
 
 extern void task_switch(task_t* next);
@@ -33,7 +34,7 @@ task_t* running_task(){
 
 }
 
-void schdule(){
+void _ofp schdule(){
     task_t* current = running_task();
     // 这里实验的, 如果当前是任务a 就切换到任务b, 如果是任务b 就切换到任务a
     task_t* next;
@@ -46,22 +47,26 @@ void schdule(){
 }
 
 
-void thread_a(){
+void _ofp thread_a(){
+    asm volatile("sti\n");
+    int c = 0;
     while(true){
-        printk("A");
-        schdule();
+        printk("A~");
     }
 }
-void thread_b(){
+void _ofp thread_b(){
+    // 因为是在中断内进行的调度, 而进入中断 if标志位又被置为0, 所以由中断函数进入到当前任务中时, 需要把任务的eflag置为1(打开中断)
+    // , 这样中断在调用完中断处理函数之后, 会pop保存的寄存器状态, 我们这个函数一进来就把 if标志位置 设置为1了, 也就跟着恢复了
+    asm volatile("sti\n");
+    int c = 0;
     while(true){
-        printk("B");
-        schdule();
+        printk("B~");
     }
 }
 
 
 void task_init(){
-    // test();
+    test();
 
 }
 
@@ -70,7 +75,6 @@ void test(){
     task_create(task_a_stack, thread_a);
     task_create(task_b_stack, thread_b);
     schdule();
-
 }
 
 /*
