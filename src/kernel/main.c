@@ -5,10 +5,10 @@
 
 void kernel_init(){
     // 初始化控制台
-    console_init();
+    // console_init();
 
     // 初始化全局描述符
-    gdt_init();
+    // gdt_init();
     
     // 初始化中断
     interrupt_init();
@@ -17,7 +17,7 @@ void kernel_init(){
     // task_init();
 
     // 初始化时钟中断
-    // clock_init();
+    clock_init();
 
     // 初始化时间
     // time_init();
@@ -26,6 +26,9 @@ void kernel_init(){
     // rtc_init();
 
 
+    memory_map_init();
+    memory_test();
+    
 
 
     asm volatile("sti\n");

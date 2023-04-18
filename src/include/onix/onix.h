@@ -14,6 +14,7 @@
 #include <onix/clock.h>>
 #include <onix/time.h>>
 #include <onix/rtc.h>>
+#include <onix/memory.h>>
 
 
 void kernel_init();
