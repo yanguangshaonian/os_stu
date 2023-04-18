@@ -13,6 +13,7 @@
 #include <onix/stdlib.h>>
 #include <onix/clock.h>>
 #include <onix/time.h>>
+#include <onix/rtc.h>>
 
 
 void kernel_init();

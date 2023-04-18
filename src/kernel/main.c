@@ -22,6 +22,9 @@ void kernel_init(){
     // 初始化时间
     // time_init();
 
+    // 闹钟中断
+    rtc_init();
+
 
     asm volatile("sti\n");
     hang();

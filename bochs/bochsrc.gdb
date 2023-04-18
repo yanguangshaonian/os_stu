@@ -36,7 +36,7 @@ print_timestamps: enabled=0
 gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0
 port_e9_hack: enabled=0
 private_colormap: enabled=0
-clock: sync=none, time0=local, rtc_sync=0
+clock: sync=realtime, time0=local, rtc_sync=1
 # no cmosimage
 log: -
 logprefix: %t%e%d

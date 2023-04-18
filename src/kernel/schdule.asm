@@ -31,5 +31,5 @@ task_switch:
     pop ebx
     pop ebp
 
-    ; 此时 栈顶是 call task_switch 的下一行代码的位置, ret即可 
+    ; 此时 栈顶是 call task_switch 的下一行代码的位置(如果是第一次调用则是函数指针的位置), ret即可 
     ret

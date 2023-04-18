@@ -136,12 +136,6 @@ u32 get_yday(tm *time)
     return res;
 }
 
-// 从cmos芯片中读取到时间
-u8 cmos_read(u8 addr)
- {
-     out_8(CMOS_ADDR, CMOS_NMI | addr);
-     return in_8(CMOS_DATA);
- };
 
 void time_read_bcd(tm *time)
 {
@@ -192,6 +186,6 @@ void time_init()
 
     // 计算得到时间戳
     startup_time = mktime(&time);
-    DEBUGK("时间戳 time: %d", startup_time);
+    DEBUGK("now time: %d", startup_time);
 
 }

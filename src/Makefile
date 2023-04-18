@@ -54,6 +54,7 @@ $(BUILD_PATH)/kernel.bin:$(BUILD_PATH)/kernel/start.o \
 		$(BUILD_PATH)/lib/stdlib.o\
 		$(BUILD_PATH)/kernel/clock.o\
 		$(BUILD_PATH)/kernel/time.o\
+		$(BUILD_PATH)/kernel/rtc.o\
 
 	$(shell mkdir -p $(dir $@))
 	ld -m elf_i386 -static $^ -o $@ -Ttext $(KERNEL_ENTRY_POINT)
