@@ -17,12 +17,12 @@ void kernel_init(){
     // task_init();
 
     // 初始化时钟中断
-    clock_init();
+    // clock_init();
 
     // 初始化时间
-    time_init();
+    // time_init();
 
-    
+
     asm volatile("sti\n");
     hang();
 
