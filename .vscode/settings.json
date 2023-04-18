@@ -27,6 +27,7 @@
         "*.inc": "c",
         "clock.h": "c",
         "time.h": "c",
-        "rtc.h": "c"
+        "rtc.h": "c",
+        "memory.h": "c"
     }
 }

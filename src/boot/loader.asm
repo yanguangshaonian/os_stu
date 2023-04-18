@@ -16,7 +16,7 @@ detect_memory:
     ; 设置检测内存的buffer位置
     mov ax, 0
     mov es, ax
-    mov edi, mem_task_buffer
+    mov edi, mem_struct_buffer
 
     ; 固定签名
     mov edx, 0x534d4150
@@ -25,7 +25,7 @@ detect_memory:
     xor ebx, ebx
 
     ; 保存的目的地
-    mov di, mem_task_buffer
+    mov di, mem_struct_buffer
 
     .next:
         ; 子功能号
@@ -40,7 +40,7 @@ detect_memory:
         ; 计算下一个内存结构体保存的首地址
         add di, cx
 
-        inc word [mem_task_count]
+        inc word [mem_struct_count]
 
         ; 不为0 说明检查未完成
         cmp ebx, 0
@@ -52,13 +52,13 @@ detect_memory:
     ret
 
     ; ; 循环结构体内的值(我们只读取低32位相关的信息, 高32位的暂时不需要)
-    ; mov cx, [mem_task_count]
+    ; mov cx, [mem_struct_count]
     ; ; 初始偏移量
     ; mov si, 0
     ; .show
-    ;     mov eax, [mem_task_buffer + si]  ; 基地址 低32位
-    ;     mov ebx, [mem_task_buffer + si + 8]  ; 内存长度的低32位
-    ;     mov edx, [mem_task_buffer + si + 16]  ; 本段内存类型  1: 可以使用, 2: 内存使用或者被保留中, 其他: 未定义
+    ;     mov eax, [mem_struct_buffer + si]  ; 基地址 低32位
+    ;     mov ebx, [mem_struct_buffer + si + 8]  ; 内存长度的低32位
+    ;     mov edx, [mem_struct_buffer + si + 16]  ; 本段内存类型  1: 可以使用, 2: 内存使用或者被保留中, 其他: 未定义
 
     ;     add si, 20
     ;     ; xchg bx, bx  ; bochs 的魔数, 代码执行到这里会停下
@@ -129,6 +129,9 @@ protect_mode:
     mov cl, 200 
     call read_disk
     
+    mov eax, 0x20220205  ; 内核魔数
+    mov ebx, mem_struct_count  ; 内存结构体 数量统计
+    mov ecx, mem_struct_buffer  ; 内存结构体 的起始位置
     jmp dword code_selecter:0x10000
     ud2  ; 执行到这里直接出错(不可能执行到这里)
     jmp $
@@ -232,11 +235,11 @@ error:
     ret
     .error_msg db "Loader Error!!!", 10, 13, 0
 
-mem_task_count:
-    dw 0
+mem_struct_count:  ; 一共多少内存结构体
+    dd 0
 
 ; 用来存放检测内存结果的结构体
-mem_task_buffer:
+mem_struct_buffer:
     times 20*10 db 0
 
 
@@ -273,11 +276,8 @@ gdt_start:
         db 0b_1_1_0_0_0000 | limit >> 16   ; G_D/B_L_AVL | 段界限16~19
         db base >> 24                     ; 段基址24~31
     gdt_padding:
-        times 2<<16-($-gdt_start) db 0
+        times 2<<15-($-gdt_start) db 0
 gdt_end:
-
-
-
 
 loading_log:
     db 'Loader Start', 13, 10, 0

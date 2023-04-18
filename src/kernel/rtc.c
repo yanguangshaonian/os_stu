@@ -32,9 +32,8 @@ void rtc_handler(int handle_num)
     time_read(&time);
     u32 now_time = mktime(&time);
     if (next_time <= mktime(&time)) {
-        DEBUGK("rtc handler %d... %d  %d \n", counter++, now_time, next_time);
+        DEBUGK("rtc handler %d... %d  %d", counter++, now_time, next_time);
         next_time = 0xffffffff;
-        set_alarm(1);
     }
 }
 
@@ -72,20 +71,22 @@ void set_alarm(u32 secs)
     }
 
     next_time = mktime(&time);
+
+    printk("set alarm...\n");
+    cmos_write(CMOS_B, 0b01000010);  // bocsh 中无法打开闹钟中断, 未知bug, 这里使用周期中断 实现的伪闹钟
+    cmos_read(CMOS_C); // 读 C 寄存器，以允许 CMOS 中断
 }
 
 
 
 void rtc_init()
 {
-    cmos_write(CMOS_B, 0b01000010); // 打开周期中断
-    // cmos_write(CMOS_B, 0b00100010); // 打开闹钟中断
-    cmos_read(CMOS_C); // 读 C 寄存器，以允许 CMOS 中断
+    // cmos_write(CMOS_B, 0b01000010); // 打开周期中断(当达到寄存器 A 中 RS 所设定的时间基准时,允许产生中断, 24小时制)
+    // // cmos_write(CMOS_B, 0b00100010); // 打开闹钟中断
+    // cmos_read(CMOS_C); // 读 C 寄存器，以允许 CMOS 中断
 
-    // 设置中断频率
-    out_8(CMOS_A, (in_8(CMOS_A) & 0xf) | 0b1110);
-
-    set_alarm(3);
+    // // 设置中断频率
+    // out_8(CMOS_A, (in_8(CMOS_A) & 0xf) | 0b1110);  // 250 ms 触发一次中断
 
     // 设置自定义中断处理函数
     set_interrupt_handler(IRQ_RTC, rtc_handler);
