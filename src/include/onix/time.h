@@ -38,7 +38,7 @@ typedef struct tm{
 void time_read_bcd(tm *time);
 void time_read(tm *time);
 
-// 将struct tm 结构体类型表示的时间转换为从 1970 年 1 月 1 日 00:00:00 +0000 (UTC) 到该时间点的秒数
+// 将struct tm 结构体类型表示的时间转换为从 1970年1月1日00:00:00 +0000(UTC) 到该时间点的秒数
 usize mktime(tm *time);
 
 void time_init();

@@ -192,4 +192,6 @@ void time_init()
 
     // 计算得到时间戳
     startup_time = mktime(&time);
+    DEBUGK("时间戳 time: %d", startup_time);
+
 }

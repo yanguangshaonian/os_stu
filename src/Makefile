@@ -99,10 +99,20 @@ bochsg: $(BUILD_PATH)/master.img
 	@rm -rf $(BUILD_PATH)/*lock
 	bochs-gdb -q -f ../bochs/bochsrc.gdb
 
-.PHONY: qemu
-qemu: $(BUILD_PATH)/master.img
-	qemu-system-i386 \
-	-s -S \
+
+QEMU:= 	qemu-system-i386 \
 	-m 64M \
 	-boot c \
-	-hda $<
+	-drive file=$(BUILD_PATH)/master.img,if=ide,index=0,media=disk,format=raw \
+	-audiodev pa,id=hda \
+	-machine pcspk-audiodev=hda \
+	-rtc base=localtime \
+
+
+.PHONY: qemug
+qemug: $(BUILD_PATH)/master.img
+	$(QEMU) -s -S \
+
+.PHONY: qemu
+qemu: $(BUILD_PATH)/master.img
+	$(QEMU)
